@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Time Comparison Table</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      background: #f0f8ff;
+    }
+    h2 {
+      text-align: center;
+    }
+    .controls {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .controls label {
+      margin: 0 10px;
+      font-weight: bold;
+    }
+    .table-container {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+      max-width: 1200px;
+      margin: auto;
+    }
+    .hour-cell {
+      height: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5em;
+      color: white;
+      background-size: cover;
+      background-position: center;
+      border: 1px solid #fff;
+    }
+    .header-cell {
+      font-weight: bold;
+      background: #333;
+    }
+  </style>
+</head>
+<body>
+  <h2>Time Comparison: South Korea vs Colorado vs Chile</h2>
+  <div class="controls">
+    <label>
+      Colorado DST:
+      <input type="checkbox" id="coloradoDST" checked>
+    </label>
+    <label>
+      Chile DST:
+      <input type="checkbox" id="chileDST">
+    </label>
+  </div>
+  <div class="table-container" id="timeTable"></div>
+
+  <script>
+    const timeTable = document.getElementById('timeTable');
+    const coloradoDST = document.getElementById('coloradoDST');
+    const chileDST = document.getElementById('chileDST');
+
+    const headers = ['South Korea', 'Colorado, USA', 'Chile'];
+    const backgrounds = hour => {
+      if (hour >= 6 && hour < 18) return 'url("https://example.com/day.jpg")';
+      return 'url("https://example.com/night.jpg")';
+    };
+
+    const generateTable = () => {
+      timeTable.innerHTML = '';
+      const offsetKorea = 0;
+      const offsetColorado = coloradoDST.checked ? -15 : -16; // Korea is UTC+9
+      const offsetChile = chileDST.checked ? -12 : -13; // Chile STD is UTC-4 or -3
+
+      // Header row
+      headers.forEach(h => {
+        const cell = document.createElement('div');
+        cell.className = 'hour-cell header-cell';
+        cell.innerText = h;
+        timeTable.appendChild(cell);
+      });
+
+      // 24 rows for hours
+      for (let i = 0; i < 24; i++) {
+        const times = [i, (i + offsetColorado + 24) % 24, (i + offsetChile + 24) % 24];
+        times.forEach(time => {
+          const cell = document.createElement('div');
+          cell.className = 'hour-cell';
+          cell.style.backgroundImage = backgrounds(time);
+          cell.innerText = `${time.toString().padStart(2, '0')}:00`;
+          timeTable.appendChild(cell);
+        });
+      }
+    };
+
+    coloradoDST.addEventListener('change', generateTable);
+    chileDST.addEventListener('change', generateTable);
+
+    generateTable();
+  </script>
+</body>
+</html>
